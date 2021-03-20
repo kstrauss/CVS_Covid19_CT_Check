@@ -47,13 +47,13 @@ def main():
 
         ##Maybe tweet new availability
         if cvs.startswith( 'Available' ) and not last_data['CVS'].startswith( 'Available' ):
-            tweet_it('Vaccination appointments are available at CVS. ' + cvs[9:] + " " + cvs_url)
-            #print("Vaccine app available " + cvs[9:] + " " + +cvs_url 
-
+            #tweet_it('Vaccination appointments are available at CVS. ' + cvs[9:] + " " + cvs_url)
+            print("Vaccine app available " + cvs[9:] + " " + +cvs_url )
+            
         ##Maybe tweet new unavailability
         if "Unavailable" == cvs and last_data['CVS'].startswith( 'Available' ):
-            tweet_it('CVS vaccination appointments are now closed.')
-            #print("Appointments are not available")
+            #tweet_it('CVS vaccination appointments are now closed.')
+            print("Appointments are not available")
 
     except pd.errors.EmptyDataError:
         df_historical = pd.DataFrame()
@@ -99,7 +99,7 @@ def stat_check(data):
 def get_cvs_data():
     headers = {'referer': 'https://www.cvs.com/immunizations/covid-19-vaccine?icid=coronavirus-lp-nav-vaccine'}
     try:
-        req = requests.get('https://www.cvs.com/immunizations/covid-19-vaccine.vaccine-status.ma.json?vaccineinfo', headers=headers)
+        req = requests.get('https://www.cvs.com/immunizations/covid-19-vaccine.vaccine-status.ct.json?vaccineinfo', headers=headers)
     except requests.exceptions.RequestException as e:
         return "ERROR - Requests"
 
@@ -110,11 +110,12 @@ def get_cvs_data():
         if 'data' not in json_response['responsePayloadData']:
             return "ERROR"
         else:
-            if 'MA' not in json_response['responsePayloadData']['data']:
+            if 'CT' not in json_response['responsePayloadData']['data']:
                 return "ERROR"
     
     message = ''
-    for provider in json_response['responsePayloadData']['data']['MA']:
+    #print(json_response['responsePayloadData']['data']['CT'])
+    for provider in json_response['responsePayloadData']['data']['CT']:
         city = provider['city']
         status = provider['status']
         total = 0
